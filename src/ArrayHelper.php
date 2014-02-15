@@ -19,7 +19,7 @@ class ArrayHelper
 		}
 		
 		if (is_object($array)) {
-		    $array = \Joomla\Utilities\ArrayHelper::fromObject($array);
+		    $array = self::fromObject($array);
 		}
 
 		if (isset($array[$key])) 
@@ -30,7 +30,7 @@ class ArrayHelper
 		foreach (explode('.', $key) as $segment)
 		{
 		    if (is_object($array)) {
-		        $array = \Joomla\Utilities\ArrayHelper::fromObject($array);
+		        $array = self::fromObject($array);
 		    }
 		    		    
 			if ( !is_array($array) || !array_key_exists($segment, $array))
@@ -261,5 +261,73 @@ class ArrayHelper
 	    }
 	
 	    return $array;
+	}
+	
+	/**
+	 * Utility function to map an object to an array
+	 *
+	 * @param   object   $p_obj    The source object
+	 * @param   boolean  $recurse  True to recurse through multi-level objects
+	 * @param   string   $regex    An optional regular expression to match on field names
+	 *
+	 * @return  array    The array mapped from the given object
+	 */
+	public static function fromObject($p_obj, $recurse = true, $regex = null)
+	{
+		if (is_object($p_obj))
+		{
+			return self::arrayFromObject($p_obj, $recurse, $regex);
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+	/**
+	 * Utility function to map an object or array to an array
+	 *
+	 * @param   mixed    $item     The source object or array
+	 * @param   boolean  $recurse  True to recurse through multi-level objects
+	 * @param   string   $regex    An optional regular expression to match on field names
+	 *
+	 * @return  array  The array mapped from the given object
+	 */
+	private static function arrayFromObject($item, $recurse, $regex)
+	{
+		if (is_object($item))
+		{
+			$result = array();
+
+			foreach (get_object_vars($item) as $k => $v)
+			{
+				if (!$regex || preg_match($regex, $k))
+				{
+					if ($recurse)
+					{
+						$result[$k] = self::arrayFromObject($v, $recurse, $regex);
+					}
+					else
+					{
+						$result[$k] = $v;
+					}
+				}
+			}
+		}
+		elseif (is_array($item))
+		{
+			$result = array();
+
+			foreach ($item as $k => $v)
+			{
+				$result[$k] = self::arrayFromObject($v, $recurse, $regex);
+			}
+		}
+		else
+		{
+			$result = $item;
+		}
+
+		return $result;
 	}
 }
