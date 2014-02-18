@@ -100,12 +100,14 @@ class Theme extends \Phalcon\Mvc\View\Simple
         $this->setBuffer( $view_string, 'view' );        
         
         // render the system messages, right before the theme
-        $this->setBuffer( $this->getDI()->getShared('flash')->output(), 'system.messages' );
+        ob_start();
+        $this->getDI()->getShared('flashSession')->output();
+        $messages = ob_get_contents();
+        ob_end_clean();        
+        $this->setBuffer( $messages, 'system.messages' );
         
         // Finally render the theme, replacing any of its tags with the appropriate buffers
-        
-        // TODO add the ability for controller to set Theme Variants, 
-        // which would replace index.php with something like calendar.php or print.php or email.php or json.php or xml.php
+        // TODO Before loading the variant file, ensure it exists.  If not, load index.php or throw a 500 error
         $theme = $this->loadFile( $this->getThemePath( $this->getCurrentTheme() ) . $this->getCurrentVariant() );
         $theme_tags = $this->getTags( $theme );
         $string = $this->replaceTagsWithBuffers( $theme, $theme_tags );
@@ -203,6 +205,20 @@ class Theme extends \Phalcon\Mvc\View\Simple
         if (\Dsc\Phalcon\ArrayHelper::exists($this->dsc_theme, 'themes.paths.' . $theme)) {
             \Dsc\Phalcon\ArrayHelper::set($this->dsc_theme, 'themes.current', $theme);
         }
+        
+        return $this;
+    }
+    
+    public function setVariant( $name ) 
+    {
+        $filename = $name;
+        $ext = substr($filename, -4);
+        if ($ext != '.php') {
+            $filename .= '.php';
+        }
+        
+        // TODO ensure that the variant filename exists in the theme folder?        
+        \Dsc\Phalcon\ArrayHelper::set($this->dsc_theme, 'variants.current', $filename);
         
         return $this;
     }
