@@ -73,48 +73,55 @@ class Theme extends \Phalcon\Mvc\View\Simple
      */
     public function renderTheme( $view, array $params=null, $theme_name=null )
     {
-        // TODO Render any mini-modules (blocks, or whatever we're calling them)
-        /*
-        if (class_exists( '\\Modules\\Factory' ))
-        {
-            // Render the requested modules
-            foreach ( $this->template_tags as $full_string => $args )
+        try {
+        
+            // TODO Render any mini-modules (blocks, or whatever we're calling them)
+            /*
+            if (class_exists( '\\Modules\\Factory' ))
             {
-                if (in_array( strtolower( $args['type'] ), array(
-                                'modules' 
-                ) ) && ! empty( $args['name'] ))
+                // Render the requested modules
+                foreach ( $this->template_tags as $full_string => $args )
                 {
-                    // get the requested module position content
-                    $content = \Modules\Factory::render( $args['name'], \Base::instance()->get( 'PARAMS.0' ) );
-                    $this->setContents( $content, $args['type'], $args['name'] );
+                    if (in_array( strtolower( $args['type'] ), array(
+                                    'modules' 
+                    ) ) && ! empty( $args['name'] ))
+                    {
+                        // get the requested module position content
+                        $content = \Modules\Factory::render( $args['name'], \Base::instance()->get( 'PARAMS.0' ) );
+                        $this->setContents( $content, $args['type'], $args['name'] );
+                    }
                 }
             }
+            */
+                    
+            // then render the view, the most precise of the parts
+            // do it before the messages
+            $view_string = $this->renderView( $view, $params );
+            
+            // render the system messages, right before the theme
+            ob_start();
+            $this->getDI()->getShared('flashSession')->output();
+            $messages = ob_get_contents();
+            ob_end_clean();
+            $this->setBuffer( $messages, 'system.messages' );
+            
+            // and replace the tags in the view with their appropriate buffers
+            $view_tags = $this->getTags( $view_string );
+            $view_string = $this->replaceTagsWithBuffers( $view_string, $view_tags );
+            $this->setBuffer( $view_string, 'view' );
+            
+            // Finally render the theme, replacing any of its tags with the appropriate buffers
+            // TODO Before loading the variant file, ensure it exists.  If not, load index.php or throw a 500 error
+            $theme = $this->loadFile( $this->getThemePath( $this->getCurrentTheme() ) . $this->getCurrentVariant() );
+            $theme_tags = $this->getTags( $theme );
+            $string = $this->replaceTagsWithBuffers( $theme, $theme_tags );
+            
+            return $string;
+        
+        } catch (\Exception $e) {
+        	ob_clean();
+        	throw new \ErrorException( $e->getMessage() );
         }
-        */
-                
-        // then render the view, the most precise of the parts
-        // do it before the messages
-        $view_string = $this->renderView( $view, $params );
-        
-        // render the system messages, right before the theme
-        ob_start();
-        $this->getDI()->getShared('flashSession')->output();
-        $messages = ob_get_contents();
-        ob_end_clean();        
-        $this->setBuffer( $messages, 'system.messages' );
-        
-        // and replace the tags in the view with their appropriate buffers
-        $view_tags = $this->getTags( $view_string );
-        $view_string = $this->replaceTagsWithBuffers( $view_string, $view_tags );
-        $this->setBuffer( $view_string, 'view' );
-        
-        // Finally render the theme, replacing any of its tags with the appropriate buffers
-        // TODO Before loading the variant file, ensure it exists.  If not, load index.php or throw a 500 error
-        $theme = $this->loadFile( $this->getThemePath( $this->getCurrentTheme() ) . $this->getCurrentVariant() );
-        $theme_tags = $this->getTags( $theme );
-        $string = $this->replaceTagsWithBuffers( $theme, $theme_tags );
-        
-        return $string;
     }
     
     public function renderView( $view, array $params=null ) 
