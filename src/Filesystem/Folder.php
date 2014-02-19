@@ -1,5 +1,5 @@
 <?php 
-namespace Dsc\Phalcon\Filesystem;
+namespace Dsc\Lib\Filesystem;
 
 class Folder
 {
@@ -20,7 +20,7 @@ class Folder
     public static function folders($path, $filter = '.', $recurse = false, $full = false, $exclude = array('.git', '.svn', 'CVS', '.DS_Store', '__MACOSX'), $excludefilter = array('^\..*'))
     {
         // Check to make sure the path valid and clean
-        $path = \Dsc\Phalcon\Filesystem\Path::clean($path);
+        $path = \Dsc\Lib\Filesystem\Path::clean($path);
     
         // Is the path a folder?
         if (!is_dir($path))

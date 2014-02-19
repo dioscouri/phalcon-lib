@@ -1,5 +1,5 @@
 <?php 
-namespace Dsc\Phalcon;
+namespace Dsc\Lib;
 
 class ArrayHelper
 {

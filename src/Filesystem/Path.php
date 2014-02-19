@@ -1,5 +1,5 @@
 <?php 
-namespace Dsc\Phalcon\Filesystem;
+namespace Dsc\Lib\Filesystem;
 
 class Path
 {
@@ -64,7 +64,7 @@ class Path
     {
         if (!is_string($path))
         {
-            throw new \UnexpectedValueException('\Dsc\Phalcon\Filesystem\Path::clean $path is not a string.');
+            throw new \UnexpectedValueException('\Dsc\Lib\Filesystem\Path::clean $path is not a string.');
         }
     
         $path = trim($path);

@@ -1,9 +1,9 @@
 <?php 
-namespace Dsc\Phalcon;
+namespace Dsc\Lib;
 
 class System 
 {
-    use \Dsc\Phalcon\Traits\Singleton;
+    use \Dsc\Lib\Traits\Singleton;
     
     protected $_di;
     
@@ -38,7 +38,7 @@ class System
         }, true);
         
         $di->setShared('system', function(){
-            return \Dsc\Phalcon\System::instance();
+            return \Dsc\Lib\System::instance();
         });
     }
 }

@@ -1,5 +1,5 @@
 <?php 
-namespace Dsc\Phalcon;
+namespace Dsc\Lib;
 
 class Apps
 {
@@ -17,11 +17,11 @@ class Apps
             throw new \Exception('The "PATH_ROOT" constant must be defined for your application.');
         }
         
-        \Dsc\Phalcon\System::instance( $application->getDI() );
+        \Dsc\Lib\System::instance( $application->getDI() );
         
         // do the original apps first
-        $path = \Dsc\Phalcon\Filesystem\Path::clean( PATH_ROOT . 'vendor/dioscouri/' );
-        if ($folders = \Dsc\Phalcon\Filesystem\Folder::folders( $path ))
+        $path = \Dsc\Lib\Filesystem\Path::clean( PATH_ROOT . 'vendor/dioscouri/' );
+        if ($folders = \Dsc\Lib\Filesystem\Folder::folders( $path ))
         {
             foreach ($folders as $folder)
             {
@@ -32,8 +32,8 @@ class Apps
         }
         
         // then do the custom apps
-        $path = \Dsc\Phalcon\Filesystem\Path::clean( PATH_ROOT . 'apps/' );
-        if ($folders = \Dsc\Phalcon\Filesystem\Folder::folders( $path ))
+        $path = \Dsc\Lib\Filesystem\Path::clean( PATH_ROOT . 'apps/' );
+        if ($folders = \Dsc\Lib\Filesystem\Folder::folders( $path ))
         {
             foreach ($folders as $folder)
             {
@@ -46,9 +46,9 @@ class Apps
         // then do any additional paths
         foreach ($additional_paths as $additional_path)
         {
-            $additional_path = \Dsc\Phalcon\Filesystem\Path::clean( $additional_path . DIRECTORY_SEPARATOR );
+            $additional_path = \Dsc\Lib\Filesystem\Path::clean( $additional_path . DIRECTORY_SEPARATOR );
                         
-            if ($folders = \Dsc\Phalcon\Filesystem\Folder::folders( $additional_path ))
+            if ($folders = \Dsc\Lib\Filesystem\Folder::folders( $additional_path ))
             {
                 foreach ($folders as $folder)
                 {

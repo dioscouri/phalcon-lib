@@ -1,5 +1,5 @@
 <?php 
-namespace Dsc\Phalcon;
+namespace Dsc\Lib;
 
 /**
  * Container for singular object instances

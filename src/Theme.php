@@ -1,5 +1,5 @@
 <?php 
-namespace Dsc\Phalcon;
+namespace Dsc\Lib;
 
 class Theme extends \Phalcon\Mvc\View\Simple
 {
@@ -45,7 +45,7 @@ class Theme extends \Phalcon\Mvc\View\Simple
         // TODO ensure that the path exists
         // TODO ensure that the path has an index.php in it
         
-        \Dsc\Phalcon\ArrayHelper::set($this->dsc_theme, 'themes.paths.' . $name, $path);
+        \Dsc\Lib\ArrayHelper::set($this->dsc_theme, 'themes.paths.' . $name, $path);
 
         return $this;
     }
@@ -63,7 +63,7 @@ class Theme extends \Phalcon\Mvc\View\Simple
         // TODO ensure that the path has a trailing slash
         // TODO ensure the path exists
         
-        \Dsc\Phalcon\ArrayHelper::set($this->dsc_theme, 'views.paths.' . $key, $path);
+        \Dsc\Lib\ArrayHelper::set($this->dsc_theme, 'views.paths.' . $key, $path);
         
         return $this;
     }
@@ -122,12 +122,12 @@ class Theme extends \Phalcon\Mvc\View\Simple
         $string = null;
         
         $view = str_replace("\\", "/", $view);
-        $pieces = \Dsc\Phalcon\String::split(str_replace(array("::", ":"), "|", $view));
+        $pieces = \Dsc\Lib\String::split(str_replace(array("::", ":"), "|", $view));
         
         // Overrides!
         // an overrides folder exists in this theme, let's check for the presence of an override for the requested view file
-        $dir = \Dsc\Phalcon\Filesystem\Path::clean( $this->getThemePath( $this->getCurrentTheme() ) . "Overrides/" );
-        if ($dir = \Dsc\Phalcon\Filesystem\Path::real($dir)) 
+        $dir = \Dsc\Lib\Filesystem\Path::clean( $this->getThemePath( $this->getCurrentTheme() ) . "Overrides/" );
+        if ($dir = \Dsc\Lib\Filesystem\Path::real($dir)) 
         {
             if (count($pieces) > 1)
             {
@@ -146,13 +146,13 @@ class Theme extends \Phalcon\Mvc\View\Simple
                 $requested_filename = basename($pieces[0]);                
             }
             
-            $path = \Dsc\Phalcon\Filesystem\Path::clean( $dir . "/" . $view_string . "/" . $requested_folder . "/" );
-            if ($path = \Dsc\Phalcon\Filesystem\Path::real($path))
+            $path = \Dsc\Lib\Filesystem\Path::clean( $dir . "/" . $view_string . "/" . $requested_folder . "/" );
+            if ($path = \Dsc\Lib\Filesystem\Path::real($path))
             {
                 $path_pattern = $path . $requested_filename . ".*";
                 if ($matches = glob( $path_pattern ))
                 {
-                    $this->setViewsDir( \Dsc\Phalcon\Filesystem\Path::clean( \Dsc\Phalcon\Filesystem\Path::real($dir . "/" . $view_string) . "/" ) );
+                    $this->setViewsDir( \Dsc\Lib\Filesystem\Path::clean( \Dsc\Lib\Filesystem\Path::real($dir . "/" . $view_string) . "/" ) );
                     $string = parent::render( $requested_file, $params );
                 }
             }
@@ -179,7 +179,7 @@ class Theme extends \Phalcon\Mvc\View\Simple
             \FB::log(get_object_vars($this));
             */
             
-            //echo \Dsc\Phalcon\Debug::dump( get_object_vars($this) );
+            //echo \Dsc\Lib\Debug::dump( get_object_vars($this) );
             
             $string = parent::render( $requested_file, $params );            
         }        
@@ -204,8 +204,8 @@ class Theme extends \Phalcon\Mvc\View\Simple
         	$this->registerThemePath($path, $theme);
         }
         
-        if (\Dsc\Phalcon\ArrayHelper::exists($this->dsc_theme, 'themes.paths.' . $theme)) {
-            \Dsc\Phalcon\ArrayHelper::set($this->dsc_theme, 'themes.current', $theme);
+        if (\Dsc\Lib\ArrayHelper::exists($this->dsc_theme, 'themes.paths.' . $theme)) {
+            \Dsc\Lib\ArrayHelper::set($this->dsc_theme, 'themes.current', $theme);
         }
         
         return $this;
@@ -220,7 +220,7 @@ class Theme extends \Phalcon\Mvc\View\Simple
         }
         
         // TODO ensure that the variant filename exists in the theme folder?        
-        \Dsc\Phalcon\ArrayHelper::set($this->dsc_theme, 'variants.current', $filename);
+        \Dsc\Lib\ArrayHelper::set($this->dsc_theme, 'variants.current', $filename);
         
         return $this;
     }
@@ -230,7 +230,7 @@ class Theme extends \Phalcon\Mvc\View\Simple
      */
     public function getCurrentTheme()
     {
-        return \Dsc\Phalcon\ArrayHelper::get($this->dsc_theme, 'themes.current');
+        return \Dsc\Lib\ArrayHelper::get($this->dsc_theme, 'themes.current');
     }
 
     /**
@@ -238,7 +238,7 @@ class Theme extends \Phalcon\Mvc\View\Simple
      */
     public function getCurrentVariant()
     {
-        return \Dsc\Phalcon\ArrayHelper::get($this->dsc_theme, 'variants.current');
+        return \Dsc\Lib\ArrayHelper::get($this->dsc_theme, 'variants.current');
     }
     
     /**
@@ -246,7 +246,7 @@ class Theme extends \Phalcon\Mvc\View\Simple
      */
     public function getCurrentView()
     {
-        return \Dsc\Phalcon\ArrayHelper::get($this->dsc_theme, 'views.current');
+        return \Dsc\Lib\ArrayHelper::get($this->dsc_theme, 'views.current');
     }
     
     /**
@@ -254,7 +254,7 @@ class Theme extends \Phalcon\Mvc\View\Simple
      */
     public function getThemePath( $name )
     {
-        return \Dsc\Phalcon\ArrayHelper::get($this->dsc_theme, 'themes.paths.'.$name);
+        return \Dsc\Lib\ArrayHelper::get($this->dsc_theme, 'themes.paths.'.$name);
     }
     
     /**
@@ -262,7 +262,7 @@ class Theme extends \Phalcon\Mvc\View\Simple
      */
     public function getViewPath( $name )
     {
-        return \Dsc\Phalcon\ArrayHelper::get($this->dsc_theme, 'views.paths.'.$name);
+        return \Dsc\Lib\ArrayHelper::get($this->dsc_theme, 'views.paths.'.$name);
     }
     
     /**
@@ -272,7 +272,7 @@ class Theme extends \Phalcon\Mvc\View\Simple
      */
     public function getThemes()
     {
-        $return = (array) \Dsc\Phalcon\ArrayHelper::get($this->dsc_theme, 'themes.paths');
+        $return = (array) \Dsc\Lib\ArrayHelper::get($this->dsc_theme, 'themes.paths');
         
         return $return;
     }
@@ -280,7 +280,7 @@ class Theme extends \Phalcon\Mvc\View\Simple
     /**
      * Return any tmpl tags found in the string
      * 
-     * @return \Dsc\Phalcon\Theme
+     * @return \Dsc\Lib\Theme
      */
     public function getTags( $file )
     {
@@ -350,7 +350,7 @@ class Theme extends \Phalcon\Mvc\View\Simple
 
     public function loadFile( $path )
     {
-        // TODO Add something like this from F3 to \Dsc\Phalcon\System
+        // TODO Add something like this from F3 to \Dsc\Lib\System
         //extract($this->app->hive());
         
         ob_start();
@@ -367,7 +367,7 @@ class Theme extends \Phalcon\Mvc\View\Simple
             $name = 0; 
         }
         
-        \Dsc\Phalcon\ArrayHelper::set($this->dsc_theme, 'buffers.' . $type . "." . $name, $contents);
+        \Dsc\Lib\ArrayHelper::set($this->dsc_theme, 'buffers.' . $type . "." . $name, $contents);
         
         return $this;
     }
@@ -378,6 +378,6 @@ class Theme extends \Phalcon\Mvc\View\Simple
             $name = 0; 
         }
     
-        return \Dsc\Phalcon\ArrayHelper::get($this->dsc_theme, 'buffers.' . $type . "." . $name );
+        return \Dsc\Lib\ArrayHelper::get($this->dsc_theme, 'buffers.' . $type . "." . $name );
     }
 }

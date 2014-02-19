@@ -1,5 +1,5 @@
 <?php 
-namespace Dsc\Phalcon\Filesystem;
+namespace Dsc\Lib\Filesystem;
 
 class File
 {
@@ -21,7 +21,7 @@ class File
             return false;
         }
 
-        if (!$directoryName = Dsc\Phalcon\Filesystem\Path::real( dirname($path) )) 
+        if (!$directoryName = Dsc\Lib\Filesystem\Path::real( dirname($path) )) 
         {
         	return false;
         }
