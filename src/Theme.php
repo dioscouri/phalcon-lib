@@ -93,11 +93,8 @@ class Theme extends \Phalcon\Mvc\View\Simple
         */
                 
         // then render the view, the most precise of the parts
-        // and replace the tags in the view with their appropriate buffers
+        // do it before the messages
         $view_string = $this->renderView( $view, $params );
-        $view_tags = $this->getTags( $view_string );
-        $view_string = $this->replaceTagsWithBuffers( $view_string, $view_tags );
-        $this->setBuffer( $view_string, 'view' );        
         
         // render the system messages, right before the theme
         ob_start();
@@ -105,6 +102,11 @@ class Theme extends \Phalcon\Mvc\View\Simple
         $messages = ob_get_contents();
         ob_end_clean();        
         $this->setBuffer( $messages, 'system.messages' );
+        
+        // and replace the tags in the view with their appropriate buffers
+        $view_tags = $this->getTags( $view_string );
+        $view_string = $this->replaceTagsWithBuffers( $view_string, $view_tags );
+        $this->setBuffer( $view_string, 'view' );
         
         // Finally render the theme, replacing any of its tags with the appropriate buffers
         // TODO Before loading the variant file, ensure it exists.  If not, load index.php or throw a 500 error

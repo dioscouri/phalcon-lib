@@ -19,18 +19,20 @@ class System
         
         $di->set('flash', function(){
             $flash = new \Phalcon\Flash\Session(array(
-                            'error' => 'alert alert-error',
+                            'error' => 'alert alert-danger',
                             'success' => 'alert alert-success',
                             'notice' => 'alert alert-info',
+                            'warning' => 'alert alert-warning',
             ));
             return $flash;
         }, true);
         
         $di->set('flashSession', function(){
             $flash = new \Phalcon\Flash\Session(array(
-                            'error' => 'alert alert-error',
+                            'error' => 'alert alert-danger',
                             'success' => 'alert alert-success',
                             'notice' => 'alert alert-info',
+                            'warning' => 'alert alert-warning',
             ));
             return $flash;
         }, true);
