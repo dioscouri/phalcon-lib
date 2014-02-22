@@ -3,22 +3,21 @@ namespace Dsc\Lib;
 
 class Collection extends \Phalcon\Mvc\Collection
 {
-    protected static $model_config = array(
+    protected $model_config = array(
         'cache_enabled' => true,
         'track_states' => true,
         'context' => null,
         'default_sort' => array( '_id' => 1 )
     );
     
-    protected static $query_params = array(
-        'fields' => array(),
+    protected $query_params = array(
         'conditions' => array(),
         'sort' => array(),
         'limit' => null,
-        'skip' => null
+        'skip' => 0
     );
     
-    protected static $model_state = null;
+    protected $model_state = null;
     
 
     /**
@@ -75,11 +74,16 @@ class Collection extends \Phalcon\Mvc\Collection
      * @param unknown $param
      * @return NULL
      */
-    public static function getParam( $param )
+    public function getParam( $param=null )
     {
-        if (array_key_exists($param, static::$query_params))
+        if ($param === null) 
         {
-            return static::$query_params[$param];
+            return $this->query_params;
+        }
+        
+        if (array_key_exists($param, $this->query_params))
+        {
+            return $this->query_params[$param];
         }
     
         return null;
@@ -212,16 +216,16 @@ class Collection extends \Phalcon\Mvc\Collection
      * that uses the model's state
      * and implements caching (if enabled)
      */
-    public static function getItems($refresh=false)
+    public function getItems($refresh=false)
     {
         // TODO Store the state        
     	// TODO Implement caching
-    	return static::fetchItems();
+    	return $this->fetchItems();
     }
     
-    protected static function fetchItems()
+    protected function fetchItems()
     {
-        $return = static::find($this->query_params);
+        $return = $this->find($this->query_params);
         
         return $return;
     }
@@ -231,16 +235,16 @@ class Collection extends \Phalcon\Mvc\Collection
      * that uses the model's state
      * and implements caching (if enabled)
      */
-    public static function getItem()
+    public function getItem()
     {
         // TODO Store the state
         // TODO Implement caching
-        return static::fetchItem();
+        return $this->fetchItem();
     }
     
-    protected static function fetchItem()
+    protected function fetchItem()
     {
-        $return = static::findFirst($this->query_params);
+        $return = $this->findFirst($this->query_params);
     
         return $return;
     }
@@ -253,15 +257,15 @@ class Collection extends \Phalcon\Mvc\Collection
      * 
      * @return \Dsc\Lib\Paginator
      */
-    public static function paginate($refresh=false)
+    public function paginate($refresh=false)
     {
-        $pos = static::getState('list.offset', 0, 'int');
-        $size = static::getState('list.limit', 10, 'int');
-        $total = static::count( static::getParam( 'conditions' ) );
+        $pos = $this->getState('list.offset', 0, 'int');
+        $size = $this->getState('list.limit', 10, 'int');
+        $total = $this->count( $this->getParam( 'conditions' ) );
         $count = ceil($total/$size);
         $pos = max(0,min($pos,$count-1));
         $config = array(
-            'items'=>static::getItems($refresh),
+            'items'=>$this->getItems($refresh),
             'total_items'=>$total,
             'items_per_page'=>$size,
             'total_pages'=>$count,
@@ -275,17 +279,17 @@ class Collection extends \Phalcon\Mvc\Collection
     
     public function getFields()
     {
-        if (empty($this->query_params['fields'])) {
-            $this->fetchFields();
+        $this->fetchFields();
+        
+        if (!empty($this->query_params['fields'])) {
+            return $this->query_params['fields'];
         }
         
-        return $this->query_params['fields'];
+        return null;
     }
     
     protected function fetchFields()
     {
-        $this->query_params['fields'] = array();
-    
         $select_fields = $this->getState('select.fields');
         if (!empty($select_fields) && is_array($select_fields))
         {
@@ -295,18 +299,18 @@ class Collection extends \Phalcon\Mvc\Collection
         return $this;
     }
     
-    public static function getConditions()
+    public function getConditions()
     {
-        if (empty(static::$query_params['conditions'])) {
-            static::fetchConditions();
+        if (empty($this->query_params['conditions'])) {
+            $this->fetchConditions();
         }
         
-        return static::$query_params['conditions'];
+        return $this->query_params['conditions'];
     }
     
-    protected static function fetchConditions()
+    protected function fetchConditions()
     {
-        static::$query_params['conditions'] = array();
+        $this->query_params['conditions'] = array();
     
         return $this;
     }
